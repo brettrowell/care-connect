@@ -16,17 +16,13 @@
 - Cross-platform UI package wired with web + native entries.
 - Domain model + Zod schemas scaffolded.
 - Supabase client factories scaffolded.
+- Dependencies installed (`pnpm`).
+- React Native CLI init run (ios/ + android/ generated).
 
 **Remaining**
-1. Install dependencies from the repo root:
-   - `pnpm install`
-2. Initialize the native platforms (React Native CLI):
-   - `cd apps/mobile`
-   - `npx react-native init CareConnect --directory . --template react-native-template-typescript`
-   - Re-apply `metro.config.js`, `babel.config.js`, `index.js`, `src/App.tsx` if the init overwrites them.
-3. Start the web app:
+1. Start the web app:
    - `pnpm --filter @care-connect/web dev`
 
 **Notes**
-- `apps/mobile` is intentionally minimal until the CLI init generates `ios/` and `android/`.
+- `apps/mobile` now includes generated `ios/` and `android/` folders.
 - Shared Tailwind config lives in `packages/config` and is referenced from `apps/web`.

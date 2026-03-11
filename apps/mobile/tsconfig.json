@@ -1,8 +1,8 @@
 {
-  "extends": "@care-connect/config/tsconfig",
+  "extends": "@react-native/typescript-config",
   "compilerOptions": {
-    "jsx": "react-jsx"
+    "types": ["jest"]
   },
-  "include": ["**/*.ts", "**/*.tsx", "index.js"],
-  "exclude": ["node_modules"]
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["**/node_modules", "**/Pods"]
 }
