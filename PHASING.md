@@ -2,7 +2,7 @@
 
 ## Phase 0 — Foundation
 
-### Step 1 — Monorepo Setup (In Progress)
+### Step 1 — Monorepo Setup (DONE)
 
 **Goal:** Establish the Turborepo + pnpm workspace, app shells, shared packages, and mobile Metro config for monorepo resolution.
 
@@ -18,10 +18,6 @@
 - Supabase client factories scaffolded.
 - Dependencies installed (`pnpm`).
 - React Native CLI init run (ios/ + android/ generated).
-
-**Remaining**
-1. Start the web app:
-   - `pnpm --filter @care-connect/web dev`
 
 **Notes**
 - `apps/mobile` now includes generated `ios/` and `android/` folders.
