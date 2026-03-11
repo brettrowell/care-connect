@@ -1,0 +1,4 @@
+{
+  "extends": "@care-connect/config/tsconfig",
+  "include": ["src"]
+}
