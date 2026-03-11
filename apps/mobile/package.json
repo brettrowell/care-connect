@@ -1,0 +1,25 @@
+{
+  "name": "careconnect-mobile",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@care-connect/ui": "workspace:*",
+    "nativewind": "^4.1.23",
+    "react": "^19.0.0",
+    "react-native": "^0.76.0"
+  },
+  "devDependencies": {
+    "@care-connect/config": "workspace:*",
+    "@react-native/metro-config": "^0.76.0",
+    "@types/react": "^19.0.10",
+    "tailwindcss": "^3.4.10",
+    "typescript": "^5.5.4"
+  }
+}
