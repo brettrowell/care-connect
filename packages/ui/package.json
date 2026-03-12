@@ -28,6 +28,7 @@
     "react-native": ">=0.76"
   },
   "devDependencies": {
+    "@care-connect/config": "workspace:*",
     "@types/react": "^19.2.14"
   }
 }

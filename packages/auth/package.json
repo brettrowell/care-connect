@@ -14,5 +14,8 @@
   "dependencies": {
     "@care-connect/supabase": "workspace:*",
     "@supabase/supabase-js": "^2.49.1"
+  },
+  "devDependencies": {
+    "@care-connect/config": "workspace:*"
   }
 }

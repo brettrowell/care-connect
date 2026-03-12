@@ -175,16 +175,28 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.49.1
         version: 2.99.0
+    devDependencies:
+      '@care-connect/config':
+        specifier: workspace:*
+        version: link:../config
 
   packages/config: {}
 
-  packages/db: {}
+  packages/db:
+    devDependencies:
+      '@care-connect/config':
+        specifier: workspace:*
+        version: link:../config
 
   packages/domain:
     dependencies:
       zod:
         specifier: ^3.23.8
         version: 3.25.76
+    devDependencies:
+      '@care-connect/config':
+        specifier: workspace:*
+        version: link:../config
 
   packages/supabase:
     dependencies:
@@ -194,6 +206,10 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.49.1
         version: 2.99.0
+    devDependencies:
+      '@care-connect/config':
+        specifier: workspace:*
+        version: link:../config
 
   packages/ui:
     dependencies:
@@ -204,6 +220,9 @@ importers:
         specifier: '>=0.76'
         version: 0.84.1(@babel/core@7.29.0)(@react-native-community/cli@20.1.0(typescript@5.9.3))(@react-native/metro-config@0.84.1(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3)
     devDependencies:
+      '@care-connect/config':
+        specifier: workspace:*
+        version: link:../config
       '@types/react':
         specifier: ^19.2.14
         version: 19.2.14
