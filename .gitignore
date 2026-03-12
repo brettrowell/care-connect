@@ -3,6 +3,8 @@ node_modules
 .next
 .turbo
 .vercel
+.expo
+web-build
 .DS_Store
 .idea
 .vscode
@@ -11,7 +13,7 @@ node_modules
 .npm-debug.log
 .yarn-debug.log
 .yarn-error.log
-supabase/.temp
+database/supabase/.temp
 .env
 .env.*
 !.env.example

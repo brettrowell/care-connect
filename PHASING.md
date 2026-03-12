@@ -12,50 +12,50 @@ Priorities:
 
 Must be solid before anything else.
 
-1. Monorepo setup (DONE)
+1. Monorepo setup (UPDATED)
    - Turborepo + pnpm workspace  
-   - apps/web (Next.js 15/16 App Router)  
-   - apps/mobile (bare React Native CLI – NO Expo)  
-   - packages/{db, domain, ui, auth, supabase, config}  
+   - Root folders: frontend/ + backend/ + database/ + shared/  
+   - frontend/ = single React Native codebase for web + mobile (Expo + react-native-web)  
+   - database/ = Supabase project, SQL, and infra  
+   - shared/packages/{db, domain, ui, auth, supabase, config}  
    - Shared Tailwind/NativeWind config  
-   - Metro config fix for mobile monorepo resolution
+   - Metro config fix for monorepo resolution
 
-2. Supabase project setup & auth foundation (DONE)  
+2. Supabase project setup & auth foundation (UPDATED)  
    - Create Supabase project (DONE)  
-   - Web env configured (DONE)  
-     - `apps/web/.env.local` populated  
-   - Mobile env configured (DONE)  
-     - `apps/mobile/.env` + `react-native-dotenv` in Babel  
+   - Frontend env configured (UPDATE)  
+     - `frontend/.env` (shared)  
+     - `frontend/.env.local` (web overrides if needed)  
    - Supabase client helpers wired + typed (DONE)  
-     - `packages/supabase/*` typed with `Database`  
-     - `apps/mobile/src/config/supabase.ts` typed with `Database`  
+     - `shared/packages/supabase/*` typed with `Database`  
+     - `frontend/src/config/supabase.ts` typed with `Database`  
    - Auth enabled (email only) (DONE)  
    - Basic RLS policies on initial tables (DONE)  
    - Group owner bootstrap trigger (DONE)  
-     - `supabase/schema.sql`  
+     - `database/supabase/schema.sql`  
    - Generate & commit Supabase types (DONE)  
-     - `pnpm supabase:types` → `packages/db/src/types/supabase.ts`  
+     - `pnpm supabase:types` → `shared/packages/db/src/types/supabase.ts`  
    - Export DB types for use in code (DONE)  
-     - `packages/db/src/types/index.ts` → `export type { Database } from "./supabase";`
+     - `shared/packages/db/src/types/index.ts` → `export type { Database } from "./supabase";`
 
-3. Auth abstraction layer (packages/auth) (DONE)  
+3. Auth abstraction layer (shared/packages/auth) (UPDATED)  
    - Thin adapter pattern (supabase-adapter + future cognito stub) (DONE)  
    - `getCurrentUser()` / session helpers (server + client) (DONE)  
-   - Protected routes/layout in web (middleware) & mobile (navigation guards) (DONE)  
-   - Web auth flow with access-token cookie sync (DONE)  
-   - Protected `/app` route for validation (DONE)  
-   - Mobile auth screens + guard wiring (DONE)
+   - Protected routes/navigation guards (web + mobile) (UPDATE)  
+   - Auth flow with access-token sync (UPDATE)  
+   - Protected routes for validation (UPDATE)  
+   - Auth screens + guard wiring (UPDATE)  
 
 Next steps after Phase 0 Task 3  
    - Start Phase 0 Task 4: core shared infrastructure  
-   - Add initial domain schemas (Patient, Entity, Group) in `packages/domain`  
-   - Expand UI primitives in `packages/ui` (inputs, forms, cards)  
+   - Add initial domain schemas (Patient, Entity, Group) in `shared/packages/domain`  
+   - Expand UI primitives in `shared/packages/ui` (inputs, forms, cards)  
    - Consider auth hardening: password reset, email verification, and session refresh handling
 
-4. Core shared infrastructure (DONE)  
-   - Supabase client helpers (typed, RLS-aware) in packages/supabase (DONE)  
-   - Zod + domain base schemas in packages/domain (Patient, Entity, Group) (DONE)  
-   - UI primitives (web + native equivalents) in packages/ui (DONE)
+4. Core shared infrastructure (UPDATED)  
+   - Supabase client helpers (typed, RLS-aware) in shared/packages/supabase  
+   - Zod + domain base schemas in shared/packages/domain (Patient, Entity, Group)  
+   - UI primitives (web + native equivalents) in shared/packages/ui
 
 ## Phase 1: Groups + Patients + Basic Ownership (MVP Core – 3–5 weeks)
 
