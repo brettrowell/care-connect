@@ -1,5 +1,6 @@
 import "./globals.css";
 import type { ReactNode } from "react";
+import AuthSync from "./AuthSync";
 
 export const metadata = {
   title: "Care Connect",
@@ -9,7 +10,10 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <AuthSync />
+        {children}
+      </body>
     </html>
   );
 }

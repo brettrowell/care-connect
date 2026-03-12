@@ -38,10 +38,19 @@ Must be solid before anything else.
    - Export DB types for use in code (DONE)  
      - `packages/db/src/types/index.ts` → `export type { Database } from "./supabase";`
 
-3. Auth abstraction layer (packages/auth)  
-   - Thin adapter pattern (supabase-adapter + future cognito stub)  
-   - `getCurrentUser()` / session helpers (server + client)  
-   - Protected routes/layout in web (middleware) & mobile (navigation guards)
+3. Auth abstraction layer (packages/auth) (DONE)  
+   - Thin adapter pattern (supabase-adapter + future cognito stub) (DONE)  
+   - `getCurrentUser()` / session helpers (server + client) (DONE)  
+   - Protected routes/layout in web (middleware) & mobile (navigation guards) (DONE)  
+   - Web auth flow with access-token cookie sync (DONE)  
+   - Protected `/app` route for validation (DONE)  
+   - Mobile auth screens + guard wiring (DONE)
+
+Next steps after Phase 0 Task 3  
+   - Start Phase 0 Task 4: core shared infrastructure  
+   - Add initial domain schemas (Patient, Entity, Group) in `packages/domain`  
+   - Expand UI primitives in `packages/ui` (inputs, forms, cards)  
+   - Consider auth hardening: password reset, email verification, and session refresh handling
 
 4. Core shared infrastructure  
    - Supabase client helpers (typed, RLS-aware) in packages/supabase  

@@ -1,4 +1,4 @@
-import { Button } from "@care-connect/ui";
+import Link from "next/link";
 
 export default function HomePage() {
   return (
@@ -16,8 +16,19 @@ export default function HomePage() {
             <li>Generate the React Native CLI project structure</li>
             <li>Wire shared UI + domain packages</li>
           </ul>
-          <div className="mt-4">
-            <Button>Launch checklist</Button>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              className="inline-flex items-center justify-center rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white transition hover:bg-brand/90 active:bg-brand"
+              href="/login"
+            >
+              Sign in
+            </Link>
+            <Link
+              className="inline-flex items-center justify-center rounded-full border border-brand px-5 py-2 text-sm font-semibold text-brand transition hover:bg-brand/10"
+              href="/app"
+            >
+              Go to app
+            </Link>
           </div>
         </div>
       </section>

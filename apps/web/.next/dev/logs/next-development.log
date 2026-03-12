@@ -1,2 +1,116 @@
 [00:00:04.182] Server  LOG     ✓ Ready in 3.5s
 [21:13:46.952] Server  LOG       Reload env: .env.local
+[22:10:32.220] Server  WARN    ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+[22:10:32.311] Server  LOG     ✓ Compiled in 61ms
+[22:10:32.818] Server  ERROR   ⨯ ./care-connect/apps/web/middleware.ts:2:1
+Module not found: Can't resolve '@care-connect/auth/server'
+  1 | import { NextResponse, type NextRequest } from "next/server";
+> 2 | import { getCurrentUserFromRequest } from "@care-connect/auth/server";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | const PROTECTED_PREFIXES = ["/app"];
+  5 | const PUBLIC_PATHS = ["/", "/login", "/signup"];
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[22:10:32.820] Server  ERROR   ⨯ ./care-connect/apps/web/middleware.ts:2:1
+Module not found: Can't resolve '@care-connect/auth/server'
+  1 | import { NextResponse, type NextRequest } from "next/server";
+> 2 | import { getCurrentUserFromRequest } from "@care-connect/auth/server";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | const PROTECTED_PREFIXES = ["/app"];
+  5 | const PUBLIC_PATHS = ["/", "/login", "/signup"];
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[22:13:45.201] Server  ERROR   ⨯ ./care-connect/apps/web/middleware.ts:2:1
+Module not found: Can't resolve '@care-connect/auth/server'
+  1 | import { NextResponse, type NextRequest } from "next/server";
+> 2 | import { getCurrentUserFromRequest } from "@care-connect/auth/server";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | const PROTECTED_PREFIXES = ["/app"];
+  5 | const PUBLIC_PATHS = ["/", "/login", "/signup"];
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[22:13:45.204] Server  ERROR   ⨯ ./care-connect/apps/web/middleware.ts:2:1
+Module not found: Can't resolve '@care-connect/auth/server'
+  1 | import { NextResponse, type NextRequest } from "next/server";
+> 2 | import { getCurrentUserFromRequest } from "@care-connect/auth/server";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | const PROTECTED_PREFIXES = ["/app"];
+  5 | const PUBLIC_PATHS = ["/", "/login", "/signup"];
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[22:16:49.460] Server  ERROR   ⨯ ./care-connect/apps/web/middleware.ts:2:1
+Module not found: Can't resolve '@care-connect/auth/server'
+  1 | import { NextResponse, type NextRequest } from "next/server";
+> 2 | import { getCurrentUserFromRequest } from "@care-connect/auth/server";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | const PROTECTED_PREFIXES = ["/app"];
+  5 | const PUBLIC_PATHS = ["/", "/login", "/signup"];
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[22:16:49.461] Server  ERROR   ⨯ ./care-connect/apps/web/middleware.ts:2:1
+Module not found: Can't resolve '@care-connect/auth/server'
+  1 | import { NextResponse, type NextRequest } from "next/server";
+> 2 | import { getCurrentUserFromRequest } from "@care-connect/auth/server";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | const PROTECTED_PREFIXES = ["/app"];
+  5 | const PUBLIC_PATHS = ["/", "/login", "/signup"];
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[22:17:03.430] Server  ERROR   ⨯ ./care-connect/apps/web/middleware.ts:2:1
+Module not found: Can't resolve '@care-connect/auth/server'
+  1 | import { NextResponse, type NextRequest } from "next/server";
+> 2 | import { getCurrentUserFromRequest } from "@care-connect/auth/server";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | const PROTECTED_PREFIXES = ["/app"];
+  5 | const PUBLIC_PATHS = ["/", "/login", "/signup"];
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[22:17:03.432] Server  ERROR   ⨯ ./care-connect/apps/web/middleware.ts:2:1
+Module not found: Can't resolve '@care-connect/auth/server'
+  1 | import { NextResponse, type NextRequest } from "next/server";
+> 2 | import { getCurrentUserFromRequest } from "@care-connect/auth/server";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | const PROTECTED_PREFIXES = ["/app"];
+  5 | const PUBLIC_PATHS = ["/", "/login", "/signup"];
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
