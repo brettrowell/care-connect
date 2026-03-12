@@ -20,12 +20,23 @@ Must be solid before anything else.
    - Shared Tailwind/NativeWind config  
    - Metro config fix for mobile monorepo resolution
 
-2. Supabase project setup & auth foundation  
-   - Create Supabase project  
-   - Enable auth (email + magic links / social if needed)  
-   - Basic RLS policies on auth.users and initial tables  
-   - Generate & commit Supabase types:  
-     `supabase gen types typescript --local > packages/db/types/supabase.ts`
+2. Supabase project setup & auth foundation (DONE)  
+   - Create Supabase project (DONE)  
+   - Web env configured (DONE)  
+     - `apps/web/.env.local` populated  
+   - Mobile env configured (DONE)  
+     - `apps/mobile/.env` + `react-native-dotenv` in Babel  
+   - Supabase client helpers wired + typed (DONE)  
+     - `packages/supabase/*` typed with `Database`  
+     - `apps/mobile/src/config/supabase.ts` typed with `Database`  
+   - Auth enabled (email only) (DONE)  
+   - Basic RLS policies on initial tables (DONE)  
+   - Group owner bootstrap trigger (DONE)  
+     - `supabase/schema.sql`  
+   - Generate & commit Supabase types (DONE)  
+     - `pnpm supabase:types` → `packages/db/src/types/supabase.ts`  
+   - Export DB types for use in code (DONE)  
+     - `packages/db/src/types/index.ts` → `export type { Database } from "./supabase";`
 
 3. Auth abstraction layer (packages/auth)  
    - Thin adapter pattern (supabase-adapter + future cognito stub)  

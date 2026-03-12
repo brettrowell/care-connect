@@ -5,6 +5,7 @@
   "main": "src/index.ts",
   "types": "src/index.ts",
   "dependencies": {
+    "@care-connect/db": "workspace:*",
     "@supabase/supabase-js": "^2.49.1"
   }
 }

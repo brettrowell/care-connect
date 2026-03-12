@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@care-connect/db";
 
 export type BrowserEnv = {
   url: string;
@@ -13,5 +14,5 @@ export function createBrowserClient(env?: Partial<BrowserEnv>) {
     throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY");
   }
 
-  return createClient(url, anonKey);
+  return createClient<Database>(url, anonKey);
 }

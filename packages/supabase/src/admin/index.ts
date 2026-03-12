@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@care-connect/db";
 
 export type AdminEnv = {
   url: string;
@@ -13,7 +14,7 @@ export function createAdminClient(env?: Partial<AdminEnv>) {
     throw new Error("Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY");
   }
 
-  return createClient(url, serviceRoleKey, {
+  return createClient<Database>(url, serviceRoleKey, {
     auth: { persistSession: false }
   });
 }

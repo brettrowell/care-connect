@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@care-connect/db";
 
 export type ServerEnv = {
   url: string;
@@ -13,5 +14,5 @@ export function createServerClient(env?: Partial<ServerEnv>) {
     throw new Error("Missing SUPABASE_URL or SUPABASE_ANON_KEY");
   }
 
-  return createClient(url, anonKey);
+  return createClient<Database>(url, anonKey);
 }
