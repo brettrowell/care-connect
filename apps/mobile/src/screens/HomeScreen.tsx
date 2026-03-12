@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Text, View } from "react-native";
-import { Button } from "@care-connect/ui";
+import { Button } from "@care-connect/ui/native";
 import { supabase } from "../config/supabase";
 
 export default function HomeScreen() {

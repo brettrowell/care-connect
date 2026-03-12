@@ -6,6 +6,20 @@ type SessionRequest = {
   expiresAt?: number | null;
 };
 
+function isSameOrigin(req: Request): boolean {
+  const origin = req.headers.get("origin");
+  const host = req.headers.get("host");
+  if (!origin || !host) return true;
+
+  try {
+    const originUrl = new URL(origin);
+    const originHost = originUrl.host;
+    return originHost === host;
+  } catch {
+    return false;
+  }
+}
+
 function getCookieOptions(expiresAt?: number | null) {
   const nowSeconds = Math.floor(Date.now() / 1000);
   const maxAge =
@@ -23,6 +37,10 @@ function getCookieOptions(expiresAt?: number | null) {
 }
 
 export async function POST(req: Request) {
+  if (!isSameOrigin(req)) {
+    return NextResponse.json({ error: "invalid origin" }, { status: 403 });
+  }
+
   let payload: SessionRequest | null = null;
   try {
     payload = (await req.json()) as SessionRequest;
@@ -39,7 +57,11 @@ export async function POST(req: Request) {
   return res;
 }
 
-export async function DELETE() {
+export async function DELETE(req: Request) {
+  if (!isSameOrigin(req)) {
+    return NextResponse.json({ error: "invalid origin" }, { status: 403 });
+  }
+
   const res = NextResponse.json({ ok: true });
   res.cookies.set(DEFAULT_ACCESS_COOKIE, "", {
     httpOnly: true,

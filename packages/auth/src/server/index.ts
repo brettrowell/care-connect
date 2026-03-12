@@ -15,8 +15,19 @@ export async function getCurrentUser(options?: ServerAuthOptions): Promise<AuthU
 }
 
 export async function getSession(options?: ServerAuthOptions): Promise<AuthSession | null> {
+  const accessToken = options?.accessToken;
+  if (!accessToken) return null;
+
   const adapter = options?.adapter ?? createSupabaseAdapter(createServerClient());
-  return adapter.getSession({ accessToken: options?.accessToken });
+  const user = await adapter.getCurrentUser({ accessToken });
+  if (!user) return null;
+
+  return {
+    accessToken,
+    refreshToken: null,
+    expiresAt: null,
+    user
+  };
 }
 
 export type RequestLike = {

@@ -194,10 +194,19 @@ async function getCurrentUser(options) {
     });
 }
 async function getSession(options) {
+    const accessToken = options?.accessToken;
+    if (!accessToken) return null;
     const adapter = options?.adapter ?? (0, __TURBOPACK__imported__module__$5b$project$5d2f$care$2d$connect$2f$packages$2f$auth$2f$src$2f$adapters$2f$supabase$2e$ts__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["createSupabaseAdapter"])((0, __TURBOPACK__imported__module__$5b$project$5d2f$care$2d$connect$2f$packages$2f$supabase$2f$src$2f$server$2f$index$2e$ts__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["createServerClient"])());
-    return adapter.getSession({
-        accessToken: options?.accessToken
+    const user = await adapter.getCurrentUser({
+        accessToken
     });
+    if (!user) return null;
+    return {
+        accessToken,
+        refreshToken: null,
+        expiresAt: null,
+        user
+    };
 }
 function getAccessTokenFromRequest(req, cookieName = DEFAULT_ACCESS_COOKIE) {
     const authorization = readHeader(req.headers, "authorization");
