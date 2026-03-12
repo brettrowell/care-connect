@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@care-connect/db";
+import { readEnv } from "../env";
 
 export type BrowserEnv = {
   url: string;
@@ -7,8 +8,8 @@ export type BrowserEnv = {
 };
 
 export function createBrowserClient(env?: Partial<BrowserEnv>) {
-  const url = env?.url ?? process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
-  const anonKey = env?.anonKey ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
+  const url = env?.url ?? readEnv("NEXT_PUBLIC_SUPABASE_URL") ?? "";
+  const anonKey = env?.anonKey ?? readEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY") ?? "";
 
   if (!url || !anonKey) {
     throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY");

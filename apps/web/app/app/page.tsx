@@ -3,7 +3,7 @@ import { getCurrentUserFromRequest } from "@care-connect/auth/server";
 import SignOutButton from "./SignOutButton";
 
 export default async function AppPage() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const user = await getCurrentUserFromRequest({ cookies: cookieStore });
 
   return (

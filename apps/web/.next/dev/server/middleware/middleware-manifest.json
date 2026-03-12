@@ -4,8 +4,11 @@
     "/": {
       "files": [
         "server/edge/chunks/3b626_next_dist_0816b231._.js",
-        "server/edge/chunks/[root-of-the-server]__264ed0e4._.js",
-        "server/edge/chunks/a041f_next_dist_esm_build_templates_edge-wrapper_b84d8165.js"
+        "server/edge/chunks/453ea_@supabase_realtime-js_dist_module_80d3199a._.js",
+        "server/edge/chunks/47f14_@supabase_auth-js_dist_module_94785fef._.js",
+        "server/edge/chunks/6632a__pnpm_e201d011._.js",
+        "server/edge/chunks/[root-of-the-server]__ed2e4cd2._.js",
+        "server/edge/chunks/a041f_next_dist_esm_build_templates_edge-wrapper_54895993.js"
       ],
       "name": "middleware",
       "page": "/",

@@ -8,7 +8,7 @@ Priorities:
 - Clinical daily-use features after foundations  
 - Supporting features iteratively
 
-## Phase 0: Foundation (1–2 weeks – do this first!)
+## Phase 0: Foundation (DONE)
 
 Must be solid before anything else.
 
@@ -52,10 +52,10 @@ Next steps after Phase 0 Task 3
    - Expand UI primitives in `packages/ui` (inputs, forms, cards)  
    - Consider auth hardening: password reset, email verification, and session refresh handling
 
-4. Core shared infrastructure  
-   - Supabase client helpers (typed, RLS-aware) in packages/supabase  
-   - Zod + domain base schemas in packages/domain (start with Patient, Entity, Group)  
-   - UI primitives (shadcn/ui web + NativeWind equivalents) in packages/ui
+4. Core shared infrastructure (DONE)  
+   - Supabase client helpers (typed, RLS-aware) in packages/supabase (DONE)  
+   - Zod + domain base schemas in packages/domain (Patient, Entity, Group) (DONE)  
+   - UI primitives (web + native equivalents) in packages/ui (DONE)
 
 ## Phase 1: Groups + Patients + Basic Ownership (MVP Core – 3–5 weeks)
 

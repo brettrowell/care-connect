@@ -1,4 +1,6 @@
 export * from "./ids";
+export * from "./group";
+export * from "./entity";
 export * from "./patient";
 export * from "./caregiver";
 export * from "./care-team";

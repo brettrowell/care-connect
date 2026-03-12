@@ -27,14 +27,14 @@ export type RequestLike = {
 export function getAccessTokenFromRequest(
   req: RequestLike,
   cookieName: string = DEFAULT_ACCESS_COOKIE
-): string | null {
+): string | undefined {
   const authorization = readHeader(req.headers, "authorization");
   if (authorization?.startsWith("Bearer ")) {
     return authorization.slice("Bearer ".length).trim();
   }
 
   const cookieToken = readCookie(req.cookies, cookieName);
-  return cookieToken ?? null;
+  return cookieToken;
 }
 
 export async function getCurrentUserFromRequest(
@@ -48,26 +48,26 @@ export async function getCurrentUserFromRequest(
 function readHeader(
   headers: RequestLike["headers"],
   name: string
-): string | null {
-  if (!headers) return null;
+): string | undefined {
+  if (!headers) return undefined;
   if (typeof (headers as Headers).get === "function") {
-    return (headers as Headers).get(name);
+    return (headers as Headers).get(name) ?? undefined;
   }
   const key = name.toLowerCase();
   const record = headers as Record<string, string | string[] | undefined>;
   const value = record[key];
-  if (Array.isArray(value)) return value[0] ?? null;
-  return value ?? null;
+  if (Array.isArray(value)) return value[0] ?? undefined;
+  return value ?? undefined;
 }
 
 function readCookie(
   cookies: RequestLike["cookies"],
   name: string
-): string | null {
-  if (!cookies) return null;
+): string | undefined {
+  if (!cookies) return undefined;
   if (typeof (cookies as { get: (key: string) => { value: string } | undefined }).get === "function") {
-    return (cookies as { get: (key: string) => { value: string } | undefined }).get(name)?.value ?? null;
+    return (cookies as { get: (key: string) => { value: string } | undefined }).get(name)?.value ?? undefined;
   }
   const record = cookies as Record<string, string | undefined>;
-  return record[name] ?? null;
+  return record[name] ?? undefined;
 }

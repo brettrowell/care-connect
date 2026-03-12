@@ -114,3 +114,8 @@ Module not found: Can't resolve '@care-connect/auth/server'
 https://nextjs.org/docs/messages/module-not-found
 
 
+[22:27:45.739] Server  LOG     ✓ Compiled in 43ms
+[22:28:30.661] Server  LOG     ✓ Compiled in 41ms
+[22:28:36.916] Server  LOG     ✓ Compiled in 12ms
+[22:28:41.198] Server  LOG     ✓ Compiled in 11ms
+[22:30:22.849] Server  LOG     ✓ Compiled in 4ms
