@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import * as DocumentPicker from "expo-document-picker";
 import { Button, Card, Input } from "@care-connect/ui/native";
 import {
   parseAttachmentInsert,
@@ -19,6 +20,20 @@ type NoteWithAttachments = {
   attachments: AttachmentRow[];
 };
 
+type SelectedFile = {
+  uri: string;
+  name: string;
+  mimeType?: string | null;
+  size?: number | null;
+};
+
+const ATTACHMENTS_BUCKET = "attachments";
+
+function buildStoragePath(noteId: string, fileName: string) {
+  const safeName = fileName.trim().replace(/\s+/g, "_");
+  return `notes/${noteId}/${safeName}`;
+}
+
 export default function PatientDetailScreen({ route }: Props) {
   const { patientId } = route.params;
   const [patient, setPatient] = useState<PatientRow | null>(null);
@@ -29,9 +44,7 @@ export default function PatientDetailScreen({ route }: Props) {
 
   const [noteTitle, setNoteTitle] = useState("");
   const [noteBody, setNoteBody] = useState("");
-  const [attachmentPath, setAttachmentPath] = useState("");
-  const [attachmentName, setAttachmentName] = useState("");
-  const [attachmentMime, setAttachmentMime] = useState("");
+  const [selectedFile, setSelectedFile] = useState<SelectedFile | null>(null);
 
   const loadPatient = useCallback(async () => {
     const { data, error: patientError } = await supabase
@@ -107,6 +120,24 @@ export default function PatientDetailScreen({ route }: Props) {
     [notes, attachmentsByNote]
   );
 
+  const handlePickAttachment = async () => {
+    setError(null);
+    const result = await DocumentPicker.getDocumentAsync({
+      copyToCacheDirectory: false
+    });
+
+    if (result.canceled) return;
+    const asset = result.assets?.[0];
+    if (!asset) return;
+
+    setSelectedFile({
+      uri: asset.uri,
+      name: asset.name ?? "attachment",
+      mimeType: asset.mimeType ?? null,
+      size: asset.size ?? null
+    });
+  };
+
   const handleAddNote = async () => {
     if (!noteBody.trim()) {
       setError("Note body is required.");
@@ -137,11 +168,27 @@ export default function PatientDetailScreen({ route }: Props) {
         return;
       }
 
-      if (attachmentPath.trim()) {
+      if (selectedFile) {
+        const blob = await fetch(selectedFile.uri).then((response) => response.blob());
+        const storagePath = buildStoragePath(note.id, selectedFile.name);
+        const { error: uploadError } = await supabase.storage
+          .from(ATTACHMENTS_BUCKET)
+          .upload(storagePath, blob, {
+            contentType: selectedFile.mimeType ?? undefined,
+            upsert: false
+          });
+
+        if (uploadError) {
+          setStatus("error");
+          setError(uploadError.message);
+          return;
+        }
+
         const attachmentPayload = parseAttachmentInsert({
-          storage_path: attachmentPath.trim(),
-          file_name: attachmentName.trim() ? attachmentName.trim() : null,
-          mime_type: attachmentMime.trim() ? attachmentMime.trim() : null,
+          storage_path: storagePath,
+          file_name: selectedFile.name,
+          mime_type: selectedFile.mimeType ?? null,
+          file_size: selectedFile.size ?? null,
           attached_type: "note",
           attached_id: note.id,
           uploaded_by: auth.user?.id ?? null
@@ -160,9 +207,7 @@ export default function PatientDetailScreen({ route }: Props) {
 
       setNoteTitle("");
       setNoteBody("");
-      setAttachmentPath("");
-      setAttachmentName("");
-      setAttachmentMime("");
+      setSelectedFile(null);
       setStatus("idle");
       await loadNotes();
     } catch (err) {
@@ -193,13 +238,15 @@ export default function PatientDetailScreen({ route }: Props) {
             className="min-h-[120px]"
           />
           <Text className="text-xs font-semibold text-slate-700">Attachment (optional)</Text>
-          <Input
-            placeholder="Storage path (ex: notes/1234/file.pdf)"
-            value={attachmentPath}
-            onChangeText={setAttachmentPath}
-          />
-          <Input placeholder="File name" value={attachmentName} onChangeText={setAttachmentName} />
-          <Input placeholder="Mime type" value={attachmentMime} onChangeText={setAttachmentMime} />
+          {selectedFile ? (
+            <View className="rounded-xl border border-slate-200 bg-white px-3 py-2">
+              <Text className="text-xs text-slate-700">{selectedFile.name}</Text>
+              <Text className="text-xs text-slate-500">{selectedFile.mimeType ?? "Unknown type"}</Text>
+            </View>
+          ) : (
+            <Text className="text-xs text-slate-500">No file selected.</Text>
+          )}
+          <Button title="Pick file" variant="outline" onPress={handlePickAttachment} />
           <Button
             title={status === "loading" ? "Saving..." : "Add note"}
             onPress={handleAddNote}

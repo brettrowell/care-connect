@@ -1,6 +1,7 @@
 # Care Connect Phasing Plan (MVC Fast Track)
 
 Goal: ship a minimal, secure, usable MVC ASAP with strict time/money limits. Build the smallest loop that delivers value: **auth → group → patient → shared notes/attachments → basic care team**. Everything else is a later phase.
+Last updated: March 13, 2026
 
 ## Current Ground Truth
 - Authoritative schema: `database/supabase/schema.sql`
@@ -18,27 +19,27 @@ Keep this lean; only fix what blocks MVC.
 **Objective:** A caregiver can sign up, create/join a group, add a patient, and share notes/attachments.
 
 1. Auth + session
-- Email sign up/in, session refresh, logout
-- Guarded routes (web + mobile)
+- ~~Email sign up/in, session refresh, logout~~
+- ~~Guarded routes (web + mobile)~~
 
 2. Groups + group_members
-- Create group
-- Invite/add member (role: owner/admin/member/patient)
+- ~~Create group~~
+- ~~Invite/add member (role: owner/admin/member/patient)~~
 - RLS: members can only access their groups
 
 3. Patients (minimal profile)
-- Create patient linked to group
-- Basic fields: `date_of_birth`, `blood_type`, `language`, `interpreter_needed`
+- ~~Create patient linked to group~~
+- ~~Basic fields: `date_of_birth`, `blood_type`, `language`, `interpreter_needed`~~
 - RLS: group members read/write patients in group
 
 4. Notes + attachments
-- Create note for patient
-- Attach file via `attachments` table + Supabase Storage
-- Minimal list/detail views
+- ~~Create note for patient~~
+- ~~Attach file via `attachments` table + Supabase Storage~~
+- ~~Minimal list/detail views~~
 
 5. Basic UI flow
-- Dashboard: list patients
-- Patient detail: notes tab
+- ~~Dashboard: group selector + patient summary~~
+- ~~Patient detail: notes tab~~
 
 Definition of done (MVC):
 - One group, one patient, two users can share notes + attachments without permission leaks.
