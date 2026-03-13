@@ -6,10 +6,12 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useAuthState, getGuardRedirect } from "./auth/guards";
 import HomeScreen from "./screens/HomeScreen";
 import LoginScreen from "./screens/LoginScreen";
+import PatientDetailScreen from "./screens/PatientDetailScreen";
 
 export type RootStackParamList = {
   Login: undefined;
   Home: undefined;
+  PatientDetail: { patientId: string; groupId: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -59,6 +61,7 @@ export default function App() {
         >
           <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="PatientDetail" component={PatientDetailScreen} options={{ title: "Patient" }} />
         </Stack.Navigator>
       </NavigationContainer>
       {auth.status === "loading" ? (

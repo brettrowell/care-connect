@@ -6,17 +6,31 @@ import { supabase } from "../config/supabase";
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [mode, setMode] = useState<"signIn" | "signUp">("signIn");
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
 
-  const handleSignIn = async () => {
+  const handleSubmit = async () => {
     setStatus("loading");
     setError(null);
 
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
+    if (mode === "signUp") {
+      const { error: signUpError } = await supabase.auth.signUp({
+        email,
+        password
+      });
+
+      if (signUpError) {
+        setStatus("error");
+        setError(signUpError.message);
+        return;
+      }
+
+      setStatus("idle");
+      return;
+    }
+
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
 
     if (signInError) {
       setStatus("error");
@@ -29,9 +43,13 @@ export default function LoginScreen() {
 
   return (
     <View className="flex-1 items-center justify-center bg-white px-6">
-      <Text className="text-2xl font-semibold text-slate-900">Welcome back</Text>
+      <Text className="text-2xl font-semibold text-slate-900">
+        {mode === "signIn" ? "Welcome back" : "Create your account"}
+      </Text>
       <Text className="mt-2 text-center text-sm text-slate-600">
-        Sign in with your Supabase email and password.
+        {mode === "signIn"
+          ? "Sign in with your Supabase email and password."
+          : "Use your email and a strong password to sign up."}
       </Text>
       <View className="mt-6 w-full gap-4">
         <TextInput
@@ -54,10 +72,17 @@ export default function LoginScreen() {
         />
         {error ? <Text className="text-sm text-rose-600">{error}</Text> : null}
         <Button
-          title={status === "loading" ? "Signing in..." : "Sign in"}
+          title={
+            status === "loading" ? (mode === "signIn" ? "Signing in..." : "Creating account...") : mode === "signIn" ? "Sign in" : "Sign up"
+          }
           variant="solid"
           disabled={status === "loading"}
-          onPress={handleSignIn}
+          onPress={handleSubmit}
+        />
+        <Button
+          title={mode === "signIn" ? "Need an account?" : "Already have an account?"}
+          variant="outline"
+          onPress={() => setMode(mode === "signIn" ? "signUp" : "signIn")}
         />
       </View>
     </View>
