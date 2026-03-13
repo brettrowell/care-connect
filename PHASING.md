@@ -17,6 +17,7 @@ Keep this lean; only fix what blocks MVC.
 
 ## Phase 1: MVC Slice (1–2 weeks)
 **Objective:** A caregiver can sign up, create/join a group, add a patient, and share notes/attachments.
+Status: Complete (March 13, 2026)
 
 1. Auth + session
 - ~~Email sign up/in, session refresh, logout~~
@@ -25,21 +26,23 @@ Keep this lean; only fix what blocks MVC.
 2. Groups + group_members
 - ~~Create group~~
 - ~~Invite/add member (role: owner/admin/member/patient)~~
-- RLS: members can only access their groups
+- ~~RLS: members can only access their groups~~
 
 3. Patients (minimal profile)
 - ~~Create patient linked to group~~
 - ~~Basic fields: `date_of_birth`, `blood_type`, `language`, `interpreter_needed`~~
-- RLS: group members read/write patients in group
+- ~~RLS: group members read/write patients in group~~
 
 4. Notes + attachments
 - ~~Create note for patient~~
 - ~~Attach file via `attachments` table + Supabase Storage~~
 - ~~Minimal list/detail views~~
+- ~~Storage policies for `attachments` bucket~~
 
 5. Basic UI flow
 - ~~Dashboard: group selector + patient summary~~
 - ~~Patient detail: notes tab~~
+- ~~Patients: list patients across your groups~~
 
 Definition of done (MVC):
 - One group, one patient, two users can share notes + attachments without permission leaks.

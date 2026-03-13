@@ -40,6 +40,7 @@ export default function HomeScreen() {
   const [activeGroupId, setActiveGroupId] = useState<string | null>(null);
   const [groupMembers, setGroupMembers] = useState<GroupMemberRow[]>([]);
   const [patient, setPatient] = useState<PatientRow | null>(null);
+  const [patientsByGroup, setPatientsByGroup] = useState<Record<string, PatientRow>>({});
   const [isSigningOut, setIsSigningOut] = useState(false);
 
   const [newGroupName, setNewGroupName] = useState("");
@@ -56,6 +57,7 @@ export default function HomeScreen() {
     () => groups.find((entry) => entry.group.id === activeGroupId)?.group ?? null,
     [groups, activeGroupId]
   );
+  const totalPatients = useMemo(() => Object.keys(patientsByGroup).length, [patientsByGroup]);
 
   const loadUser = useCallback(async () => {
     const { data } = await supabase.auth.getUser();
@@ -131,6 +133,31 @@ export default function HomeScreen() {
     setPatient(data ?? null);
   }, [activeGroupId]);
 
+  const loadPatientsForGroups = useCallback(async () => {
+    if (groups.length === 0) {
+      setPatientsByGroup({});
+      return;
+    }
+
+    const groupIds = groups.map((entry) => entry.group.id);
+    const { data, error: patientsError } = await supabase
+      .from("patients")
+      .select("*")
+      .in("group_id", groupIds);
+
+    if (patientsError) {
+      setError(patientsError.message);
+      return;
+    }
+
+    const mapped = (data ?? []).reduce<Record<string, PatientRow>>((acc, row) => {
+      acc[row.group_id] = row;
+      return acc;
+    }, {});
+
+    setPatientsByGroup(mapped);
+  }, [groups]);
+
   useEffect(() => {
     loadUser();
   }, [loadUser]);
@@ -142,7 +169,8 @@ export default function HomeScreen() {
   useEffect(() => {
     loadGroupMembers();
     loadPatient();
-  }, [loadGroupMembers, loadPatient]);
+    loadPatientsForGroups();
+  }, [loadGroupMembers, loadPatient, loadPatientsForGroups]);
 
   const handleCreateGroup = async () => {
     if (!userId) return;
@@ -338,6 +366,102 @@ export default function HomeScreen() {
         ) : (
           <Text className="mt-4 text-sm text-slate-500">No groups yet.</Text>
         )}
+      </Card>
+
+      <Card className="mt-6">
+        <View className="flex-row items-center justify-between">
+          <View>
+            <Text className="text-lg font-semibold text-slate-900">Patients</Text>
+            <Text className="mt-1 text-sm text-slate-600">A quick scan across every group.</Text>
+          </View>
+          <View className="rounded-full bg-brand/10 px-3 py-1">
+            <Text className="text-xs font-semibold text-brand">
+              {totalPatients} / {groups.length} linked
+            </Text>
+          </View>
+        </View>
+        <View className="mt-4 gap-4">
+          {groups.length === 0 ? (
+            <View className="rounded-2xl border border-dashed border-slate-200 bg-white p-6">
+              <Text className="text-sm font-semibold text-slate-700">No groups yet</Text>
+              <Text className="mt-1 text-xs text-slate-500">
+                Create or join a group to begin tracking patients.
+              </Text>
+            </View>
+          ) : (
+            groups.map((entry) => {
+              const groupPatient = patientsByGroup[entry.group.id] ?? null;
+              const isActive = entry.group.id === activeGroupId;
+              return (
+                <View
+                  key={entry.group.id}
+                  className={[
+                    "rounded-2xl border bg-white px-4 py-4 shadow-sm",
+                    isActive ? "border-brand/60" : "border-slate-200"
+                  ].join(" ")}
+                >
+                  <View className="flex-row items-center justify-between">
+                    <View className="flex-1">
+                      <Text className="text-sm font-semibold text-slate-900">
+                        {entry.group.name ?? "Unnamed group"}
+                      </Text>
+                      <Text className="mt-1 text-xs text-slate-500">Group ID: {entry.group.id}</Text>
+                    </View>
+                    <View
+                      className={[
+                        "rounded-full px-3 py-1",
+                        isActive ? "bg-brand/10" : "bg-slate-100"
+                      ].join(" ")}
+                    >
+                      <Text className={isActive ? "text-xs font-semibold text-brand" : "text-xs text-slate-600"}>
+                        {isActive ? "Active" : entry.role}
+                      </Text>
+                    </View>
+                  </View>
+                  {groupPatient ? (
+                    <View className="mt-4 gap-2 rounded-xl bg-slate-50 px-3 py-3">
+                      <View className="flex-row items-center justify-between">
+                        <Text className="text-xs font-semibold text-slate-700">Patient snapshot</Text>
+                        <Text className="text-xs text-slate-500">{groupPatient.id}</Text>
+                      </View>
+                      <View className="flex-row flex-wrap gap-2">
+                        <View className="rounded-full bg-white px-3 py-1">
+                          <Text className="text-xs text-slate-700">
+                            DOB: {groupPatient.date_of_birth ?? "Not set"}
+                          </Text>
+                        </View>
+                        <View className="rounded-full bg-white px-3 py-1">
+                          <Text className="text-xs text-slate-700">
+                            Blood: {groupPatient.blood_type ?? "Not set"}
+                          </Text>
+                        </View>
+                        <View className="rounded-full bg-white px-3 py-1">
+                          <Text className="text-xs text-slate-700">
+                            Language: {groupPatient.language ?? "Not set"}
+                          </Text>
+                        </View>
+                      </View>
+                      <Button
+                        title="Open patient"
+                        variant="outline"
+                        onPress={() =>
+                          navigation.navigate("PatientDetail", {
+                            patientId: groupPatient.id,
+                            groupId: entry.group.id
+                          })
+                        }
+                      />
+                    </View>
+                  ) : (
+                    <View className="mt-4 rounded-xl border border-dashed border-slate-200 bg-white px-3 py-3">
+                      <Text className="text-xs text-slate-500">No patient yet for this group.</Text>
+                    </View>
+                  )}
+                </View>
+              );
+            })
+          )}
+        </View>
       </Card>
 
       {activeGroup ? (
