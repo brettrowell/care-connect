@@ -65,6 +65,42 @@ export type Database = {
           },
         ]
       }
+      attachments: {
+        Row: {
+          attached_id: string
+          attached_type: string
+          created_at: string | null
+          file_name: string | null
+          file_size: number | null
+          id: string
+          mime_type: string | null
+          storage_path: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          attached_id: string
+          attached_type: string
+          created_at?: string | null
+          file_name?: string | null
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          storage_path: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          attached_id?: string
+          attached_type?: string
+          created_at?: string | null
+          file_name?: string | null
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          storage_path?: string
+          uploaded_by?: string | null
+        }
+        Relationships: []
+      }
       clinical_codes: {
         Row: {
           code: string
@@ -165,82 +201,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "diagnoses_patient_id_fkey"
-            columns: ["patient_id"]
-            isOneToOne: false
-            referencedRelation: "patients"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      documents: {
-        Row: {
-          created_at: string | null
-          deleted_at: string | null
-          description: string | null
-          document_type: string | null
-          entity_id: string | null
-          file_name: string | null
-          file_size: number | null
-          file_url: string
-          id: string
-          mime_type: string | null
-          patient_id: string | null
-          source_id: string | null
-          source_table: string | null
-          title: string | null
-          uploaded_by: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          deleted_at?: string | null
-          description?: string | null
-          document_type?: string | null
-          entity_id?: string | null
-          file_name?: string | null
-          file_size?: number | null
-          file_url: string
-          id?: string
-          mime_type?: string | null
-          patient_id?: string | null
-          source_id?: string | null
-          source_table?: string | null
-          title?: string | null
-          uploaded_by?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          deleted_at?: string | null
-          description?: string | null
-          document_type?: string | null
-          entity_id?: string | null
-          file_name?: string | null
-          file_size?: number | null
-          file_url?: string
-          id?: string
-          mime_type?: string | null
-          patient_id?: string | null
-          source_id?: string | null
-          source_table?: string | null
-          title?: string | null
-          uploaded_by?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "documents_entity_fk"
-            columns: ["entity_id"]
-            isOneToOne: false
-            referencedRelation: "entities"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "documents_entity_fk"
-            columns: ["entity_id"]
-            isOneToOne: false
-            referencedRelation: "pharmacies"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "documents_patient_fk"
             columns: ["patient_id"]
             isOneToOne: false
             referencedRelation: "patients"
@@ -1807,6 +1767,10 @@ export type Database = {
     }
     Functions: {
       deactivate_prescription: { Args: { pres_id: string }; Returns: undefined }
+      get_attached_group: {
+        Args: { p_id: string; p_type: string }
+        Returns: string
+      }
     }
     Enums: {
       equipment_status:

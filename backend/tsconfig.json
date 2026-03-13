@@ -1,0 +1,9 @@
+{
+  "extends": "@care-connect/config/tsconfig",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "noEmit": false
+  },
+  "include": ["src"]
+}

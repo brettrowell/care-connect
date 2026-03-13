@@ -1,9 +1,5 @@
--- ============================================================================
--- SUPABASE PUBLIC SCHEMA – SINGLE SOURCE OF TRUTH
--- Last updated: 2026-03-10
--- DO NOT EDIT MANUALLY OUTSIDE SUPABASE DASHBOARD OR MIGRATIONS
--- AI CODING AGENT: Always read this file before any DB-related task
--- ============================================================================
+-- WARNING: This schema is for context only and is not meant to be run.
+-- Table order and constraints may not be valid for execution.
 
 CREATE TABLE public.addresses (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -17,6 +13,19 @@ CREATE TABLE public.addresses (
   entity_id uuid,
   CONSTRAINT addresses_pkey PRIMARY KEY (id),
   CONSTRAINT addresses_entity_fk FOREIGN KEY (entity_id) REFERENCES public.entities(id)
+);
+CREATE TABLE public.attachments (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  storage_path text NOT NULL,
+  file_name text,
+  mime_type text,
+  file_size bigint,
+  uploaded_by uuid,
+  attached_type text NOT NULL,
+  attached_id uuid NOT NULL,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT attachments_pkey PRIMARY KEY (id),
+  CONSTRAINT attachments_uploaded_by_fkey FOREIGN KEY (uploaded_by) REFERENCES auth.users(id)
 );
 CREATE TABLE public.clinical_codes (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -47,27 +56,6 @@ CREATE TABLE public.diagnoses (
   deleted_at timestamp with time zone,
   CONSTRAINT diagnoses_pkey PRIMARY KEY (id),
   CONSTRAINT diagnoses_patient_id_fkey FOREIGN KEY (patient_id) REFERENCES public.patients(id)
-);
-CREATE TABLE public.documents (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  patient_id uuid,
-  entity_id uuid,
-  source_table text,
-  source_id uuid,
-  document_type text,
-  title text,
-  description text,
-  file_url text NOT NULL,
-  file_name text,
-  file_size integer,
-  mime_type text,
-  uploaded_by uuid,
-  created_at timestamp with time zone DEFAULT now(),
-  deleted_at timestamp with time zone,
-  CONSTRAINT documents_pkey PRIMARY KEY (id),
-  CONSTRAINT documents_patient_fk FOREIGN KEY (patient_id) REFERENCES public.patients(id),
-  CONSTRAINT documents_entity_fk FOREIGN KEY (entity_id) REFERENCES public.entities(id),
-  CONSTRAINT documents_uploaded_by_fk FOREIGN KEY (uploaded_by) REFERENCES auth.users(id)
 );
 CREATE TABLE public.entities (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
