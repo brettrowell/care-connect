@@ -1,150 +1,86 @@
-# Recommended Build Order for Care Coordination App
+# Care Connect Phasing Plan (MVC Fast Track)
 
-Based on the provided Supabase schema, this is the suggested phased build order.  
-Priorities:  
-- Security & authorization first (auth + RLS + groups)  
-- Core patient + ownership loop early (MVP value)  
-- Entity modeling next (providers, organizations)  
-- Clinical daily-use features after foundations  
-- Supporting features iteratively
+Goal: ship a minimal, secure, usable MVC ASAP with strict time/money limits. Build the smallest loop that delivers value: **auth → group → patient → shared notes/attachments → basic care team**. Everything else is a later phase.
 
-## Phase 0: Foundation (DONE)
+## Current Ground Truth
+- Authoritative schema: `database/supabase/schema.sql`
+- Domain folders: `shared/packages/domain/<table-name>` (aligned to schema)
+- Core stack: Expo RN (web+mobile), Express API, Supabase, NativeWind, Zod
 
-Must be solid before anything else.
+## Phase 0: Foundation (Done / Verify)
+Keep this lean; only fix what blocks MVC.
+1. Monorepo + workspaces + shared config
+2. Supabase types + client helpers
+3. Auth adapter layer (Supabase now, Cognito stub later)
+4. Baseline UI primitives + Tailwind/NativeWind config
 
-1. Monorepo setup (UPDATED)
-   - Turborepo + pnpm workspace  
-   - Root folders: frontend/ + backend/ + database/ + shared/  
-   - frontend/ = single React Native codebase for web + mobile (Expo + react-native-web)  
-   - database/ = Supabase project, SQL, and infra  
-   - shared/packages/{db, domain, ui, auth, supabase, config}  
-   - Shared Tailwind/NativeWind config  
-   - Metro config fix for monorepo resolution
+## Phase 1: MVC Slice (1–2 weeks)
+**Objective:** A caregiver can sign up, create/join a group, add a patient, and share notes/attachments.
 
-2. Supabase project setup & auth foundation (UPDATED)  
-   - Create Supabase project (DONE)  
-   - Frontend env configured (UPDATE)  
-     - `frontend/.env` (shared)  
-     - `frontend/.env.local` (web overrides if needed)  
-   - Supabase client helpers wired + typed (DONE)  
-     - `shared/packages/supabase/*` typed with `Database`  
-     - `frontend/src/config/supabase.ts` typed with `Database`  
-   - Auth enabled (email only) (DONE)  
-   - Basic RLS policies on initial tables (DONE)  
-   - Group owner bootstrap trigger (DONE)  
-     - `database/supabase/schema.sql`  
-   - Generate & commit Supabase types (DONE)  
-     - `pnpm supabase:types` → `shared/packages/db/src/types/supabase.ts`  
-   - Export DB types for use in code (DONE)  
-     - `shared/packages/db/src/types/index.ts` → `export type { Database } from "./supabase";`
+1. Auth + session
+- Email sign up/in, session refresh, logout
+- Guarded routes (web + mobile)
 
-3. Auth abstraction layer (shared/packages/auth) (UPDATED)  
-   - Thin adapter pattern (supabase-adapter + future cognito stub) (DONE)  
-   - `getCurrentUser()` / session helpers (server + client) (DONE)  
-   - Protected routes/navigation guards (web + mobile) (UPDATE)  
-   - Auth flow with access-token sync (UPDATE)  
-   - Protected routes for validation (UPDATE)  
-   - Auth screens + guard wiring (UPDATE)  
+2. Groups + group_members
+- Create group
+- Invite/add member (role: owner/admin/member/patient)
+- RLS: members can only access their groups
 
-Next steps after Phase 0 Task 3  
-   - Start Phase 0 Task 4: core shared infrastructure  
-   - Add initial domain schemas (Patient, Entity, Group) in `shared/packages/domain`  
-   - Expand UI primitives in `shared/packages/ui` (inputs, forms, cards)  
-   - Consider auth hardening: password reset, email verification, and session refresh handling
+3. Patients (minimal profile)
+- Create patient linked to group
+- Basic fields: `date_of_birth`, `blood_type`, `language`, `interpreter_needed`
+- RLS: group members read/write patients in group
 
-4. Core shared infrastructure (UPDATED)  
-   - Supabase client helpers (typed, RLS-aware) in shared/packages/supabase  
-   - Zod + domain base schemas in shared/packages/domain (Patient, Entity, Group)  
-   - UI primitives (web + native equivalents) in shared/packages/ui
+4. Notes + attachments
+- Create note for patient
+- Attach file via `attachments` table + Supabase Storage
+- Minimal list/detail views
 
-## Phase 1: Groups + Patients + Basic Ownership (MVP Core – 3–5 weeks)
+5. Basic UI flow
+- Dashboard: list patients
+- Patient detail: notes tab
 
-Build the "who owns / can see what" foundation.
+Definition of done (MVC):
+- One group, one patient, two users can share notes + attachments without permission leaks.
 
-5. Groups & group_members  
-   - CRUD for groups (owner creates group)  
-   - Add/remove members with roles (owner, admin, member, patient)  
-   - RLS: users can only see groups they're in
+## Phase 2: Care Team + Entities (2–3 weeks)
+**Objective:** Make providers and organizations usable in the patient context.
 
-6. Patients table + linkage  
-   - Create patient → assign to group (1:1 via group_id)  
-   - Basic patient profile view/edit (date_of_birth, blood_type, language, etc.)  
-   - RLS: only group members can read/write patients in their group
+1. Entities + entity_types
+2. Contact methods + addresses
+3. Patient care team assignments
+4. Link notes/events to entities
 
-7. Patient list + detail screen (web + mobile)  
-   - Dashboard showing patients in current user's groups  
-   - Simple patient detail page with tabs (profile, notes, events, etc. – placeholders)
+## Phase 3: Clinical Core (3–5 weeks)
+**Objective:** Day-to-day clinical value without heavy complexity.
 
-Goal: Working "closed group around a patient" loop – already useful for early testing.
+1. Patient events + event_types + participants
+2. Diagnoses + prescriptions
+3. Patient timeline (read-only aggregation)
 
-## Phase 2: Entities + Core Relationships (2–4 weeks)
+## Phase 4: Supporting Data (as needed)
+Only add when specifically needed by users.
+- Insurances
+- Patient equipment/supplies
+- Medical expenses
+- Patient nutrition/growth/tests
+- Family supports
+- Clinical codes / event codes
 
-Entities are the glue for providers/organizations.
+## Phase 5: Hardening + Scale
+- Full RLS audit
+- Audit logging + soft deletes
+- Performance indexes
+- Notifications
+- Auth swap readiness
 
-8. Entities + entity_types + addresses + contact_methods  
-   - CRUD for entities (with type filtering)  
-   - Attach addresses/contacts
+## Practical Constraints (Time/Money)
+- Prefer basic CRUD + lists over complex UX
+- Avoid custom admin panels until real users demand it
+- Ship thin features end-to-end rather than half-finished breadth
+- Use schema-aligned DTOs + Zod validation for every write
 
-9. Entity relationships & tags  
-   - Link entities (e.g. patient → primary care physician entity)
-
-10. Patient care team  
-    - Assign providers/entities to patient with role_category + active status
-
-## Phase 3: Time-Sensitive & Clinical Core Features (4–8 weeks)
-
-Daily-use clinical content.
-
-11. Patient events/appointments + event_types + participants  
-    - Create/view/edit events (appointments, visits, etc.)  
-    - Participants (link entities)
-
-12. Notes + note_attachments  
-    - Rich notes attached to patient/entity/event  
-    - File uploads (Supabase Storage)
-
-13. Documents  
-    - Upload/view documents linked to patient/entity
-
-14. Diagnoses + Prescriptions  
-    - Add/edit diagnoses (with type, onset)  
-    - Active prescriptions list + history
-
-## Phase 4: Supporting & Operational Features (iterative – 4–10 weeks)
-
-Add polish and secondary workflows.
-
-15. Insurances + policy_holder links  
-16. Patient supplies + equipment  
-17. Medical expenses  
-18. Patient nutrition / growth / tests  
-19. Family supports  
-20. Clinical codes + event_codes (if needed for standardization)
-
-## Phase 5: Polish, Search, Timeline, UX Improvements
-
-21. Patient timeline (aggregate view from events/notes/documents/etc.)  
-22. Search/filter across patient data (within group permissions)  
-23. Notifications (if adding real-time or email/SMS)  
-24. Mobile-specific UX (offline hints, push if possible)  
-25. Basic analytics/dashboard views for caregivers/providers
-
-## Phase 6: Security, Compliance, Future-Proofing
-
-26. Full RLS audit (row-level + column if needed)  
-27. Audit logging / soft deletes consistency  
-28. Auth swap readiness test (stub Cognito adapter)  
-29. HIPAA/GDPR considerations (encryption at rest, access logs, etc.)  
-30. Performance (indexes, pagination, caching)
-
-## Quick Prioritization Rationale
-
-| Priority | Why first?                          | Risk if delayed                  |
-|----------|-------------------------------------|----------------------------------|
-| Auth + Groups + Patients | Controls all access                | Security holes, rework later     |
-| Entities + Care team     | Defines "who is the provider"      | Hard to retrofit relationships   |
-| Events/Notes/Documents   | Daily collaboration value          | Core reason users open the app   |
-| Prescriptions/Diagnoses  | Clinical heart of records          | High-value data, complex forms   |
-| Supplies/Equipment/etc.  | Important but secondary workflows  | Can add incrementally            |
-
-Start small: Get one patient visible and editable by 2–3 users in a group → that's your MVP proof-of-concept. Then expand outward.
+## Immediate Next Steps
+1. Confirm MVC screens + navigation flow (web + mobile)
+2. Implement Phase 1 endpoints and screens
+3. Instrument basic analytics/logging for user feedback
