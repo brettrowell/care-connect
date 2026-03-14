@@ -3,7 +3,7 @@
   "private": true,
   "packageManager": "pnpm@9.15.4",
   "engines": {
-    "node": ">= 22.11.0"
+    "node": ">= 20.18.0"
   },
   "scripts": {
     "dev": "turbo run dev",
@@ -12,10 +12,13 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "clean": "turbo run clean",
-    "supabase:types": "cd database && supabase gen types --lang typescript --linked --schema public > ../shared/packages/db/src/types/supabase.ts"
+    "supabase:types": "cd database && supabase gen types --lang typescript --linked --schema public > ../packages/db/src/types/supabase.ts"
   },
   "devDependencies": {
     "turbo": "^2.0.6",
     "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "nativewind": "2.0.11"
   }
 }

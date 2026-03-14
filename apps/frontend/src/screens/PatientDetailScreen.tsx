@@ -1,19 +1,34 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { Modal, Pressable, ScrollView, Text, View } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as DocumentPicker from "expo-document-picker";
 import { Button, Card, Input } from "@care-connect/ui/native";
 import {
   parseAttachmentInsert,
   parseNoteInsert,
+  parsePatientEventInsert,
+  QUICK_EVENT_TYPE_NAMES,
   type AttachmentRow,
   type NoteRow,
-  type PatientRow
+  type PatientRow,
+  type QuickEventTypeName
 } from "@care-connect/domain";
 import { supabase } from "../config/supabase";
 import type { RootStackParamList } from "../App";
 
 type Props = NativeStackScreenProps<RootStackParamList, "PatientDetail">;
+
+type EventTypeRow = { id: string; name: string; category: string | null };
+type PatientEventRow = {
+  id: string;
+  patient_id: string;
+  event_type_id: string | null;
+  title: string | null;
+  description: string | null;
+  event_date: string | null;
+  notes: string | null;
+  created_at: string | null;
+};
 
 type NoteWithAttachments = {
   note: NoteRow;
@@ -39,12 +54,19 @@ export default function PatientDetailScreen({ route }: Props) {
   const [patient, setPatient] = useState<PatientRow | null>(null);
   const [notes, setNotes] = useState<NoteRow[]>([]);
   const [attachmentsByNote, setAttachmentsByNote] = useState<Record<string, AttachmentRow[]>>({});
+  const [eventTypes, setEventTypes] = useState<EventTypeRow[]>([]);
+  const [quickEvents, setQuickEvents] = useState<PatientEventRow[]>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
 
   const [noteTitle, setNoteTitle] = useState("");
   const [noteBody, setNoteBody] = useState("");
   const [selectedFile, setSelectedFile] = useState<SelectedFile | null>(null);
+
+  const [quickEventType, setQuickEventType] = useState<QuickEventTypeName | null>(null);
+  const [quickEventDescription, setQuickEventDescription] = useState("");
+  const [quickEventNotes, setQuickEventNotes] = useState("");
+  const [quickEventSubmitting, setQuickEventSubmitting] = useState(false);
 
   const loadPatient = useCallback(async () => {
     const { data, error: patientError } = await supabase
@@ -106,10 +128,93 @@ export default function PatientDetailScreen({ route }: Props) {
     await loadAttachments(rows.map((row) => row.id));
   }, [patientId, loadAttachments]);
 
+  const loadEventTypes = useCallback(async () => {
+    const { data, error: typesError } = await supabase
+      .from("event_types")
+      .select("id, name, category")
+      .eq("category", "quick");
+
+    if (typesError) {
+      setError(typesError.message);
+      return;
+    }
+    setEventTypes((data ?? []) as EventTypeRow[]);
+  }, []);
+
+  const loadQuickEvents = useCallback(async () => {
+    const { data: typesData } = await supabase
+      .from("event_types")
+      .select("id")
+      .eq("category", "quick");
+    const typeIds = (typesData ?? []).map((r) => r.id);
+    if (typeIds.length === 0) {
+      setQuickEvents([]);
+      return;
+    }
+
+    const { data, error: eventsError } = await supabase
+      .from("patient_events")
+      .select("id, patient_id, event_type_id, title, description, event_date, notes, created_at")
+      .eq("patient_id", patientId)
+      .in("event_type_id", typeIds)
+      .is("deleted_at", null)
+      .order("event_date", { ascending: false })
+      .limit(50);
+
+    if (eventsError) {
+      setError(eventsError.message);
+      return;
+    }
+    setQuickEvents((data ?? []) as PatientEventRow[]);
+  }, [patientId]);
+
   useEffect(() => {
     loadPatient();
     loadNotes();
-  }, [loadPatient, loadNotes]);
+    loadEventTypes();
+    loadQuickEvents();
+  }, [loadPatient, loadNotes, loadEventTypes, loadQuickEvents]);
+
+  const openQuickEventModal = (typeName: QuickEventTypeName) => {
+    setQuickEventType(typeName);
+    setQuickEventDescription("");
+    setQuickEventNotes("");
+  };
+
+  const closeQuickEventModal = () => {
+    setQuickEventType(null);
+    setQuickEventDescription("");
+    setQuickEventNotes("");
+  };
+
+  const submitQuickEvent = async () => {
+    if (!quickEventType || !quickEventDescription.trim()) return;
+    const eventType = eventTypes.find((e) => e.name === quickEventType);
+    if (!eventType) return;
+
+    setQuickEventSubmitting(true);
+    setError(null);
+    try {
+      const payload = parsePatientEventInsert({
+        patient_id: patientId,
+        event_type_id: eventType.id,
+        title: quickEventType,
+        description: quickEventDescription.trim(),
+        notes: quickEventNotes.trim() || null,
+        event_date: new Date().toISOString(),
+        status: "logged"
+      });
+      const { error: insertError } = await supabase.from("patient_events").insert(payload);
+      if (insertError) {
+        setError(insertError.message);
+        return;
+      }
+      closeQuickEventModal();
+      await loadQuickEvents();
+    } finally {
+      setQuickEventSubmitting(false);
+    }
+  };
 
   const notesWithAttachments = useMemo<NoteWithAttachments[]>(
     () =>
@@ -217,17 +322,60 @@ export default function PatientDetailScreen({ route }: Props) {
   };
 
   return (
-    <ScrollView className="flex-1 bg-slate-50" contentContainerClassName="px-6 pb-12 pt-6">
-      <Text className="text-2xl font-semibold text-slate-900">Patient details</Text>
-      {patient ? (
-        <Text className="mt-2 text-sm text-slate-600">
-          DOB {patient.date_of_birth ?? "Not set"} • Blood type {patient.blood_type ?? "Not set"}
-        </Text>
-      ) : null}
-      {error ? <Text className="mt-3 text-sm text-rose-600">{error}</Text> : null}
+    <>
+      <ScrollView className="flex-1 bg-slate-50" contentContainerClassName="px-6 pb-12 pt-6">
+        <Text className="text-2xl font-semibold text-slate-900">Patient details</Text>
+        {patient ? (
+          <Text className="mt-2 text-sm text-slate-600">
+            DOB {patient.date_of_birth ?? "Not set"} • Blood type {patient.blood_type ?? "Not set"}
+          </Text>
+        ) : null}
+        {error ? <Text className="mt-3 text-sm text-rose-600">{error}</Text> : null}
 
-      <Card className="mt-6">
-        <Text className="text-lg font-semibold text-slate-900">Add note</Text>
+        <Card className="mt-6">
+          <Text className="text-lg font-semibold text-slate-900">Quick log</Text>
+          <Text className="mt-1 text-sm text-slate-600">
+            Log bowel, feeding, vomit, or medication with a short description.
+          </Text>
+          <View className="mt-4 flex-row flex-wrap gap-2">
+            {QUICK_EVENT_TYPE_NAMES.map((name) => (
+              <Button
+                key={name}
+                title={name}
+                variant="outline"
+                onPress={() => openQuickEventModal(name)}
+              />
+            ))}
+          </View>
+        </Card>
+
+        {quickEvents.length > 0 ? (
+          <Card className="mt-6">
+            <Text className="text-lg font-semibold text-slate-900">Recent quick events</Text>
+            <View className="mt-4 gap-3">
+              {quickEvents.slice(0, 20).map((ev) => (
+                <View
+                  key={ev.id}
+                  className="rounded-xl border border-slate-200 bg-white px-3 py-2"
+                >
+                  <Text className="text-sm font-semibold text-slate-800">
+                    {ev.title ?? "Event"}
+                  </Text>
+                  <Text className="text-sm text-slate-700">{ev.description ?? "—"}</Text>
+                  {ev.notes ? (
+                    <Text className="mt-1 text-xs text-slate-500">{ev.notes}</Text>
+                  ) : null}
+                  <Text className="mt-1 text-xs text-slate-400">
+                    {ev.event_date ?? ev.created_at ?? ""}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </Card>
+        ) : null}
+
+        <Card className="mt-6">
+          <Text className="text-lg font-semibold text-slate-900">Add note</Text>
         <View className="mt-4 gap-3">
           <Input placeholder="Title (optional)" value={noteTitle} onChangeText={setNoteTitle} />
           <Input
@@ -284,6 +432,52 @@ export default function PatientDetailScreen({ route }: Props) {
           ))}
         </View>
       </Card>
-    </ScrollView>
+      </ScrollView>
+
+      <Modal
+        visible={quickEventType !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={closeQuickEventModal}
+      >
+        <Pressable
+          className="flex-1 justify-center bg-black/50 p-6"
+          onPress={closeQuickEventModal}
+        >
+          <Pressable className="rounded-2xl bg-white p-6" onPress={(e) => e.stopPropagation()}>
+            <Text className="text-lg font-semibold text-slate-900">
+              Log: {quickEventType ?? ""}
+            </Text>
+            <Text className="mt-1 text-sm text-slate-600">Description (required)</Text>
+            <Input
+              placeholder="e.g. Normal, loose, blood noted..."
+              value={quickEventDescription}
+              onChangeText={setQuickEventDescription}
+              className="mt-2"
+            />
+            <Text className="mt-3 text-sm text-slate-600">Notes (optional)</Text>
+            <Input
+              placeholder="Any extra details"
+              value={quickEventNotes}
+              onChangeText={setQuickEventNotes}
+              className="mt-2"
+            />
+            <View className="mt-6 flex-row gap-3">
+              <Button
+                title="Cancel"
+                variant="outline"
+                onPress={closeQuickEventModal}
+                disabled={quickEventSubmitting}
+              />
+              <Button
+                title={quickEventSubmitting ? "Saving..." : "Save"}
+                onPress={submitQuickEvent}
+                disabled={quickEventSubmitting || !quickEventDescription.trim()}
+              />
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
+    </>
   );
 }

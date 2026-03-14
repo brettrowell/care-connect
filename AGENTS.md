@@ -6,29 +6,30 @@ You are an expert TypeScript/React-Native-for-Web/Supabase developer building a 
 
 - Use Turborepo (latest) + pnpm workspaces.
 - Main folders at repo root:
-- frontend/ → single React Native codebase for web + mobile (Expo + react-native-web). No Next.js.
-  - backend/ → server-side code (if/when added).
-  - database/ → Supabase project, SQL, and infra.
-  - shared/ → shared packages and config.
-- Shared packages live at: shared/packages/{db, domain, ui, auth, supabase, config}
-- Each major entity (patient, note, prescription, document, entity, diagnoses, etc.) MUST have its own folder: shared/packages/domain/<entity-name>/ containing:
+  - **apps/frontend** – single React Native codebase for web + mobile (Expo + react-native-web). No Next.js.
+  - **apps/backend** – server-side code (if/when added).
+  - **database/** – Supabase project, SQL, and infra.
+  - **packages/** – shared packages and config.
+- Shared packages live at: **packages/{db, domain, ui, auth, supabase, config}**
+- Each major entity (patient, note, prescription, document, entity, diagnoses, etc.) MUST have its own folder: **packages/domain/<entity-name>/** containing:
   - types.ts
   - schema.zod.ts (Zod for runtime validation + inferred TS types)
   - <entity>.dto.ts (exposed/transfer shapes only)
   - <entity>.service.ts (pure business logic – no direct DB/supabase calls here)
   - index.ts (barrel exports)
+- One **.env** at repo root; apps read SUPABASE_URL and SUPABASE_ANON_KEY from it.
 
 ## Tech & Style Rules
 
 - Navigation: React Navigation v7+ (programmatic: Stack, Tabs, etc. – no file-based routing)
-- Styling: Tailwind v4 + NativeWind v4/v5 (shared config in shared/packages/config/tailwind/tailwind.config.cjs; use cn() helper, cva() for variants)
-- Auth: Supabase Auth + RLS-first (NEVER trust client-side checks). Future AWS Cognito swap → thin adapter in shared/packages/auth/ (supabase-adapter.ts + cognito stub + current-user.ts)
+- Styling: Tailwind v4 + NativeWind v4/v5 (shared config in packages/config/tailwind; use cn() helper, cva() for variants)
+- Auth: Supabase Auth + RLS-first (NEVER trust client-side checks). Future AWS Cognito swap → thin adapter in packages/auth/ (supabase-adapter.ts + cognito stub + current-user.ts)
 - Validation: Zod for ALL forms, API payloads, DTOs, inputs/outputs (single source of truth)
 - No inline SQL – use typed supabase-js client
 - Error handling: safe-action pattern or typed Zod errors
 - File-per-function/class + barrel exports
 - NEVER duplicate business rules – prefer domain services
-- Metro config: Adjust frontend/metro.config.js for monorepo (watchFolders to repo root)
+- Metro config: Adjust apps/frontend/metro.config.js for monorepo (watchFolders to repo root)
 
 ## Output Rules
 
@@ -49,7 +50,7 @@ Follow these rules in EVERY response and task.
   - Output as a new migration-style block (e.g. -- migration: add_column_xxx.sql)
   - Use PostgreSQL syntax compatible with Supabase
   - Include ALTER TABLE / CREATE INDEX / etc.
-  - Explain impact on existing code (e.g. "This requires updating PatientDto in shared/packages/domain/patient")
+  - Explain impact on existing code (e.g. "This requires updating PatientDto in packages/domain/patient")
   - Never apply changes directly — always propose for human review
 - RLS: All access must respect existing policies + group-based access via groups/group_members
 - Zod schemas & types: Must be derived ONLY from fields present in database/supabase/schema.sql

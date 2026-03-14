@@ -35,4 +35,5 @@ export * from "./patient-test";
 export * from "./patient-timeline";
 export * from "./prescription";
 export * from "./question";
+export * from "./quick-event";
 export * from "./tag";

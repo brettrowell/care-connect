@@ -5,7 +5,7 @@ Last updated: March 13, 2026
 
 ## Current Ground Truth
 - Authoritative schema: `database/supabase/schema.sql`
-- Domain folders: `shared/packages/domain/<table-name>` (aligned to schema)
+- Domain folders: `packages/domain/<table-name>` (aligned to schema)
 - Core stack: Expo RN (web+mobile), Express API, Supabase, NativeWind, Zod
 
 ## Phase 0: Foundation (Done / Verify)
