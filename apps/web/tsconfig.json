@@ -1,9 +1,0 @@
-{
-  "extends": "@care-connect/config/tsconfig",
-  "compilerOptions": {
-    "jsx": "preserve",
-    "plugins": [{ "name": "next" }]
-  },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
-}

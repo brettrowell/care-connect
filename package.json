@@ -1,17 +1,56 @@
 {
-  "name": "care-connect",
+  "name": "bridgecare",
+  "version": "0.1.0",
   "private": true,
-  "packageManager": "pnpm@9.15.4",
   "scripts": {
-    "dev": "turbo run dev",
-    "build": "turbo run build",
-    "lint": "turbo run lint",
-    "typecheck": "turbo run typecheck",
-    "test": "turbo run test",
-    "clean": "turbo run clean"
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "web": "vite",
+    "web:build": "vite build",
+    "web:preview": "vite preview",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint . --ext .ts,.tsx"
+  },
+  "dependencies": {
+    "@emotion/native": "^11.11.0",
+    "@emotion/react": "^11.11.0",
+    "@react-navigation/bottom-tabs": "^7.0.0",
+    "@react-navigation/native": "^7.0.0",
+    "@react-navigation/native-stack": "^7.0.0",
+    "@tanstack/react-query": "^5.59.0",
+    "@tanstack/react-query-persist-client": "^5.59.0",
+    "@supabase/supabase-js": "^2.45.0",
+    "localforage": "^1.10.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-native": "0.75.4",
+    "react-native-paper": "^5.12.5",
+    "react-native-safe-area-context": "^4.10.5",
+    "react-native-screens": "^4.4.0",
+    "react-native-vector-icons": "^10.2.0",
+    "react-native-url-polyfill": "^2.0.0",
+    "react-native-web": "~0.19.13",
+    "react-router-dom": "^6.28.0"
   },
   "devDependencies": {
-    "turbo": "^2.0.6",
-    "typescript": "^5.5.4"
+    "babel-plugin-module-resolver": "^5.0.0",
+    "@babel/core": "^7.25.0",
+    "@babel/preset-env": "^7.25.0",
+    "@babel/runtime": "^7.25.0",
+    "@react-native/babel-preset": "0.75.0",
+    "@react-native/eslint-config": "0.75.0",
+    "@react-native/metro-config": "0.75.0",
+    "@react-native/typescript-config": "0.75.0",
+    "@types/react": "^18.2.0",
+    "@types/react-native": "^0.73.0",
+    "@vitejs/plugin-react": "^4.3.3",
+    "eslint": "^8.57.0",
+    "jest": "^29.7.0",
+    "typescript": "~5.0.0",
+    "vite": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

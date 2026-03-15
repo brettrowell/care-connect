@@ -1,0 +1,17 @@
+{
+  "extends": "@react-native/typescript-config",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "strict": true,
+    "skipLibCheck": true,
+    "jsx": "react-jsx",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "noEmit": true
+  },
+  "include": ["src/**/*", "App.tsx", "index.js", "web/**/*"],
+  "exclude": ["node_modules", "babel.config.js", "metro.config.js"]
+}
