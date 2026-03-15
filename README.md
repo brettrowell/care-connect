@@ -36,6 +36,13 @@ pnpm install
    - In Supabase Dashboard → SQL Editor, run the contents of `supabase/migrations/0001_initial_schema.sql`.
 3. Copy the project URL and anon key from Settings → API.
 
+**Auth & test users**
+
+- **Create fake/test users in the Dashboard:** Authentication → Users → **Add user** → set Email and Password → Create. You can then sign in from the app with those credentials.
+- **Allow sign-up without email confirmation (dev only):** Authentication → Providers → **Email** → turn off **Confirm email**. Then "Sign up" in the app creates a user and signs you in immediately. Leave this on in production.
+- **Sign in:** Use **Sign in** with an existing user’s email/password. Sessions persist (localStorage on web); visiting `/` or opening the app when already logged in sends you to the group selector.
+- **New users** have no care groups until you create a group and add the user in the app, or insert a row into `group_members` in the SQL Editor linking `user_id` (auth user UUID) to a `group_id`.
+
 ### 3. Environment variables
 
 **Web (Vite):** create `.env` in project root:

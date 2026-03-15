@@ -11,9 +11,9 @@ import { usePermissions } from '@/hooks/usePermissions';
 import { useRecentEvents } from '@/api/queries/events';
 import { useLowStockSupplies } from '@/api/queries/supplies';
 
-export function DashboardScreen({ navigation }: { navigation?: any } = {}) {
+export function DashboardScreen({ navigation: navigationProp }: { navigation?: any } = {}) {
   const fromHook = useNavigation<any>();
-  const navigation = navigation ?? fromHook;
+  const navigation = navigationProp ?? fromHook;
   const { patient } = useCurrentGroup();
   const permissions = usePermissions();
   const { data: events, isLoading: eventsLoading } = useRecentEvents(patient?.id);

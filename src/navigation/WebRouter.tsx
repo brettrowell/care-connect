@@ -1,12 +1,13 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { LoginScreen } from '@/screens/LoginScreen';
 import { GroupSelectorScreen } from '@/screens/GroupSelectorScreen';
 import { AppStack } from './MobileNavigator';
 import { HandoffSummaryScreen } from '@/screens/HandoffSummaryScreen';
 import { CommunicationDictionaryScreen } from '@/screens/CommunicationDictionaryScreen';
+import { useAuth } from '@/hooks/useAuth';
 
 function WebLayout({ children }: { children: React.ReactNode }) {
   return <View style={styles.layout}>{children}</View>;
@@ -17,6 +18,19 @@ const screenToPath: Record<string, string> = {
   Main: '/app',
   Login: '/login',
 };
+
+/** Redirects / to /groups when logged in, else /login */
+function HomeRedirect() {
+  const { userId, loading } = useAuth();
+  if (loading) {
+    return (
+      <View style={styles.centerLayout}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+  return <Navigate to={userId ? '/groups' : '/login'} replace />;
+}
 
 function LoginRoute() {
   const navigate = useNavigate();
@@ -42,7 +56,7 @@ export function WebRouter() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<HomeRedirect />} />
         <Route path="/login" element={<LoginRoute />} />
         <Route path="/groups" element={<GroupsRoute />} />
         <Route path="/app" element={<WebLayout><NavigationContainer><AppStack /></NavigationContainer></WebLayout>} />
@@ -58,5 +72,11 @@ const styles = StyleSheet.create({
   layout: {
     flex: 1,
     minHeight: '100vh',
+  },
+  centerLayout: {
+    flex: 1,
+    minHeight: '100vh',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
